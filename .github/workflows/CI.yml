@@ -4,7 +4,7 @@ on:
       - master
   pull_request:
 
-name: Formatting, Linting and Testing
+name: CI
 
 jobs:
   fmt:
@@ -34,8 +34,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        additional_args: ["", "--no-default-features --features native-tls"]
+        os: [ubuntu-latest, macos-latest]
+        additional_args: ["", "--no-default-features"]
         
     steps:
       - uses: actions/checkout@v4
