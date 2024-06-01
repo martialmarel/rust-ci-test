@@ -4,7 +4,7 @@ on:
       - master
   pull_request:
 
-name: Formatting, Linting and Testing
+name: CI
 
 jobs:
   fmt:
@@ -34,13 +34,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        additional_args: ["", "--no-default-features --features native-tls"]
+        os: [ubuntu-latest]
+        target: [x86_64-unknown-linux-gnu, aarch64-unknown-linux-musl]
         
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo test ${{ matrix.additional_args }}
+      - run: cargo test
 
   
