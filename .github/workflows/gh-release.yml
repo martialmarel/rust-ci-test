@@ -38,7 +38,7 @@ jobs:
           delete-branch: true
           draft: false
       - name: Enable Pull Request Automerge
-        run: gh pr merge "${{ steps.create_pr.outputs.pull-request-number }}" --merge --auto --delete-branch 
+        run: gh pr merge "#${{ steps.create_pr.outputs.pull-request-number }}" --merge --auto --delete-branch 
         env:
           GH_TOKEN: ${{ secrets.PAT_WORKFLOW }}
       - name: Build
