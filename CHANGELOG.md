@@ -10,6 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 - release
+- release
+- Release-plz
+- msg
+- ci
+- ci
+- ci
+- chore typo
+- some adjustements
+- add space
+- add workflow CI
+- init rust project
+- Add readme
+- Initial commit
+
+## [0.1.0](https://github.com/martialmarel/rust-ci-test/releases/tag/v0.1.0) - 2024-06-02
+
+### Other
+- release
 - Release-plz
 - msg
 - ci
