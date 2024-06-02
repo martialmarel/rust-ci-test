@@ -20,7 +20,7 @@ jobs:
         run: |
           TAGNAME="${{github.ref_name}}"
           SEMVER="${TAGNAME:1}"
-          echo "SEMVER=$($SEMVER)" >> $GITHUB_OUTPUT
+          echo "SEMVER=$SEMVER" >> $GITHUB_OUTPUT
       - name: Change version in Cargo.toml
         run: |
           # Change version in Cargo.toml, only replace the first occurrence -> @see https://sed.js.org/
