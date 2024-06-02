@@ -1,6 +1,6 @@
 [package]
 name = "rust-ci-test"
-version = "$SEMVER"
+version = "0.4.4"
 edition = "2021"
 
 [dependencies]

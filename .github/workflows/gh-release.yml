@@ -15,13 +15,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Change version in Cargo.toml
+      - name: Retrieve Semver
+        id: retrieved_semver
         run: |
           TAGNAME="${{github.ref_name}}"
           SEMVER="${TAGNAME:1}"
           echo "The value of SEMVER is: $SEMVER"
+      - name: Change version in Cargo.toml
+        run: |
           # Change version in Cargo.toml, only replace the first occurrence -> @see https://sed.js.org/
-          sed -i '0,/version = \".*\"/s//version = "$SEMVER"/' Cargo.toml
+          sed -i '0,/version = \".*\"/s//version = "${{steps.retrieved_semver.outputs.SEMVER}}"/' Cargo.toml
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:
