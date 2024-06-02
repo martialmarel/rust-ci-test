@@ -26,6 +26,7 @@ jobs:
           # Change version in Cargo.toml, only replace the first occurrence -> @see https://sed.js.org/
           sed -i '0,/version = \".*\"/s//version = "${{steps.retrieved_semver.outputs.SEMVER}}"/' Cargo.toml
       - name: Create pull request
+        id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
           branch: version/${{ github.ref_name }}
@@ -37,7 +38,7 @@ jobs:
           delete-branch: true
           draft: false
       - name: Enable Pull Request Automerge
-        run: gh pr merge --merge --auto "1"
+        run: gh pr merge "${{ steps.create_pr.outputs.pull-request-number }}" --merge --auto --delete-branch 
         env:
           GH_TOKEN: ${{ secrets.PAT_WORKFLOW }}
       - name: Build
