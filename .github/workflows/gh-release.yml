@@ -15,21 +15,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Get next version
-        uses: MiguelRipoll23/get-next-version@v3.0.0
-        id: get-next-version
       - name: Change version in Cargo.toml
         run: |
+          TAGNAME="${{github.ref_name}}"
+          SEMVER="${TAGNAME:1}}"
           # Change version in Cargo.toml, only replace the first occurrence -> @see https://sed.js.org/
-          sed -i '0,/version = \".*\"/s//version = "${{ env.NEXT_VERSION }}"/' Cargo.toml
-        env:
-          NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
+          sed -i '0,/version = \".*\"/s//version = "${SEMVER}"/' Cargo.toml
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: version/${{ steps.get-next-version.outputs.next-version }}
-          commit-message: ${{ steps.get-next-version.outputs.next-version }}
-          title: Bump version to ${{ steps.get-next-version.outputs.next-version }}
+          branch: version/${{ github.ref_name }}
+          commit-message: ${{ github.ref_name }}
+          title: Bump version to ${{ github.ref_name }}
           body: Automated pull request triggered by a new release.
           labels: new-release,ignore-for-release
           draft: true
