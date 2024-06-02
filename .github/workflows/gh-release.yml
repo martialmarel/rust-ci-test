@@ -20,7 +20,7 @@ jobs:
           TAGNAME="${{github.ref_name}}"
           SEMVER="${TAGNAME:1}}"
           # Change version in Cargo.toml, only replace the first occurrence -> @see https://sed.js.org/
-          sed -i '0,/version = \".*\"/s//version = "${SEMVER}"/' Cargo.toml
+          sed -i '0,/version = \".*\"/s//version = "$SEMVER"/' Cargo.toml
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:
