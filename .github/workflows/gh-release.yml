@@ -36,6 +36,10 @@ jobs:
           base: main
           delete-branch: true
           draft: false
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "1"
+        env:
+          GH_TOKEN: ${{ secrets.PAT_WORKFLOW }}
       - name: Build
         run: echo ${{ github.sha }} > Release.txt
       - name: Test
