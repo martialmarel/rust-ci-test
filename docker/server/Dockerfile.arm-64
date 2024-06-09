@@ -1,0 +1,55 @@
+####################################################################################################
+## Builder
+####################################################################################################
+FROM rust:latest as builder
+
+ENV CARGO_BUILD_TARGET=aarch64-unknown-linux-musl
+ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_STRIP=aarch64-linux-gnu-strip
+ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc
+ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_STRIP=aarch64-linux-gnu-strip
+
+# install musl target
+RUN rustup target add aarch64-unknown-linux-musl
+
+RUN apt update && apt install -y musl-tools musl-dev build-essential gcc-aarch64-linux-gnu clang llvm
+RUN update-ca-certificates
+
+# Create appuser
+ENV USER=server
+ENV UID=10001
+
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    "${USER}"
+
+WORKDIR /app
+
+COPY ./ .
+
+RUN cargo build --release --target=aarch64-unknown-linux-musl
+RUN strip -s /app/target/aarch64-unknown-linux-musl/release/rust-ci-test
+
+####################################################################################################
+## Final image
+####################################################################################################
+FROM scratch
+
+# Import from builder.
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /etc/group /etc/group
+
+WORKDIR /app
+
+# Copy our build
+COPY --from=builder /app/target/aarch64-unknown-linux-musl/release/rust-ci-test ./
+
+# Use an unprivileged user.
+USER "${USER}:${USER}"
+
+CMD ["./rust-ci-test"]
