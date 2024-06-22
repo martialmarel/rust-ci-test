@@ -1,7 +1,7 @@
 ####################################################################################################
 ## Builder
 ####################################################################################################
-FROM rust:latest as builder
+FROM rust:latest AS builder
 
 ENV CARGO_BUILD_TARGET=aarch64-unknown-linux-musl
 ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
@@ -39,6 +39,7 @@ RUN strip -s /app/target/aarch64-unknown-linux-musl/release/rust-ci-test
 ## Final image
 ####################################################################################################
 FROM scratch
+ENV USER=server
 
 # Import from builder.
 COPY --from=builder /etc/passwd /etc/passwd
