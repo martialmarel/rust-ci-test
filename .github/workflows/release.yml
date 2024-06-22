@@ -1,0 +1,36 @@
+name: Create Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # fetch the entire history
+      - name: Retrieve Semver
+        id: retrieved_semver
+        run: |
+          TAGNAME="${{github.ref_name}}"
+          SEMVER="${TAGNAME:1}"
+          echo "SEMVER=$SEMVER" >> $GITHUB_OUTPUT
+      - name: Change version in Cargo.toml
+        run: |
+          # Change version in Cargo.toml, only replace the first occurrence -> @see https://sed.js.org/
+          sed -i '0,/version = \".*\"/s//version = "${{steps.retrieved_semver.outputs.SEMVER}}"/' Cargo.toml
+      - name: Commit and push new version
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add Cargo.toml
+          git commit -m "chore: release version ${{ steps.retrieved_semver.outputs.SEMVER }}"
+          git push origin HEAD:refs/heads/main  # replace 'main' with your default branch name
+      - name: Create tag
+        run: |
+          git tag "v${{ steps.retrieved_semver.outputs.SEMVER }}"
+          git push origin "v${{ steps.retrieved_semver.outputs.SEMVER }}"
